@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "baseUrl": "./",
+    "strict": true,
+    "paths": {
+      "util/*": ["src/util/*"],
+      "service/*": ["src/service/*"],
+      "components/*": ["src/components/*"],
+      "pages/*": ["src/pages/*"]
+    },
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowJs": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules", "build"],
+  "lib": ["dom", "esnext"]
+}
