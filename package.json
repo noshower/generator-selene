@@ -1,7 +1,7 @@
 {
   "name": "generator-selene",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1",
+  "description": "Yeoman generator for using React with Webpack TypeScript Babel",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,6 +14,10 @@
   ],
   "author": "noshower",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noshower/generator-selene.git"
+  },
   "dependencies": {
     "yeoman-generator": "^4.8.2"
   }

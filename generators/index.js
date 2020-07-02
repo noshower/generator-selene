@@ -2,25 +2,29 @@ var Generator = require('yeoman-generator');
 
 module.exports = class extends Generator {
   writing() {
-    this.fs.copyTpl(this.templatePath('src/pages/home.less'), this.destinationPath('src/pages/home.less'));
+    this.fs.copyTpl(this.templatePath('src'), this.destinationPath('src'));
 
-    this.fs.copyTpl(this.templatePath('src/pages/home.tsx'), this.destinationPath('src/pages/home.tsx'));
-
-    this.fs.copyTpl(this.templatePath('src/index.tsx'), this.destinationPath('src/index.tsx'));
-
-    this.fs.copyTpl(this.templatePath('.babelrc'), this.destinationPath('.babelrc'));
+    this.fs.copyTpl(this.templatePath('tests'), this.destinationPath('test'));
 
     this.fs.copyTpl(this.templatePath('.eslintignore'), this.destinationPath('.eslintignore'));
 
     this.fs.copyTpl(this.templatePath('.eslintrc.js'), this.destinationPath('.eslintrc.js'));
 
-    this.fs.copyTpl(this.templatePath('.gitignore'), this.destinationPath('.gitignore'));
+    this.fs.copyTpl(this.templatePath('.prettierignore'), this.destinationPath('.prettierignore'));
 
-    this.fs.copyTpl(this.templatePath('.prettierrc'), this.destinationPath('.prettierrc'));
+    this.fs.copyTpl(this.templatePath('.prettierrc.js'), this.destinationPath('.prettierrc.js'));
 
-    this.fs.copyTpl(this.templatePath('.stylelintrc.json'), this.destinationPath('.stylelintrc.json'));
+    this.fs.copyTpl(this.templatePath('.stylelintignore'), this.destinationPath('.stylelintignore'));
+
+    this.fs.copyTpl(this.templatePath('babel.config.js'), this.destinationPath('babel.config.js'));
+
+    this.fs.copyTpl(this.templatePath('generateScopedName.js'), this.destinationPath('generateScopedName.js'));
+
+    this.fs.copyTpl(this.templatePath('jest.config.js'), this.destinationPath('jest.config.js'));
 
     this.fs.copyTpl(this.templatePath('package.json'), this.destinationPath('package.json'));
+
+    this.fs.copyTpl(this.templatePath('stylelintrc.config.js'), this.destinationPath('stylelintrc.config.js'));
 
     this.fs.copyTpl(this.templatePath('template.html'), this.destinationPath('template.html'));
 

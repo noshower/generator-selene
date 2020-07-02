@@ -1,12 +1,17 @@
 const path = require('path');
-const HappyPack = require('happypack');
-const happyThreadPool = HappyPack.ThreadPool({ size: 4 });
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const WebpackBar = require('webpackbar');
+const generateScopedName = require('./generateScopedName');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin');
+
 const webpack = require('webpack');
 const srcPath = path.join(__dirname, './src');
+const packageName = require('./package.json').name;
 
 // 匹配svg
 const svgRegex = /\.svg(\?v=\d+\.\d+\.\d+)?$/;
@@ -21,23 +26,27 @@ const imageOptions = {
   limit: 10000,
 };
 
-module.exports = (env) => {
+module.exports = env => {
   const isEnvProduction = env.production;
   const isEnvDevelopment = env.development;
   return {
     entry: {
       app: path.join(srcPath, './index.tsx'), // 入口文件
     },
+    output: {
+      jsonpFunction: `webpackJsonp_${packageName}`,
+    },
     module: {
+      noParse: /jquery/,
       rules: [
-        { parser: { requireEnsure: false } }, // 禁用 require.ensure， 默认就是false
+        { parser: { requireEnsure: false } },
         {
           test: /\.(js|jsx|ts|tsx)$/,
-          enforce: 'pre', // 这里表示eslint在babel-loader编译前使用
-          exclude: /node_modules/,
+          enforce: 'pre',
+          include: srcPath,
           loader: 'eslint-loader',
           options: {
-            cache: true, // 开启缓存后，缓存会被写入./node_modules/.cache/eslint-loader目录
+            cache: true,
           },
         },
         {
@@ -47,8 +56,6 @@ module.exports = (env) => {
             {
               loader: 'babel-loader',
               options: {
-                // 默认缓存在node_modules/.cache/babel-loade中
-                // 使用cache-loader+ babel-loader 慢于 babel-loader + cacheDirectory
                 cacheDirectory: true,
               },
             },
@@ -58,25 +65,35 @@ module.exports = (env) => {
           test: /\.less$/,
           include: srcPath,
           use: [
-            // 生产环境将css提取到一个单独文件，这样可以异步加载，浏览器可以更快解析css
-            isEnvDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
+            'style-loader',
             {
               loader: 'css-loader',
               options: {
-                modules: {
-                  localIdentName: '[name]-[local]-[hash:base64:5]',
-                },
+                modules: isEnvDevelopment
+                  ? {
+                      localIdentName: '[name]-[local]-[hash:base64:5]',
+                    }
+                  : {
+                      getLocalIdent: (context, localIdentName, localName) => {
+                        return generateScopedName(localName, context.resourcePath);
+                      },
+                    },
               },
             },
             {
               loader: 'less-loader',
+              options: {
+                lessOptions: {
+                  javascriptEnabled: true,
+                },
+              },
             },
           ],
         },
         {
           test: /\.css$/,
-          include: /node_modules/, // 为了引入antd css
-          use: [isEnvDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
+          include: /node_modules/,
+          use: ['style-loader', 'css-loader'],
         },
         {
           test: svgRegex,
@@ -91,22 +108,14 @@ module.exports = (env) => {
       ],
     },
     resolve: {
+      modules: ['node_modules', path.resolve(__dirname, 'src')],
       extensions: ['.js', '.jsx', '.json', '.tsx', '.ts'],
-      alias: {
-        '@': path.join(srcPath, './'),
-        components: path.join(srcPath, './components'),
-        pages: path.join(srcPath, './pages'),
-        service: path.join(srcPath, './service'),
-        util: path.join(srcPath, './util'),
-        images: path.join(srcPath, './images'),
-        vo: path.join(srcPath, './vo'),
-      },
+      plugins: [new TsconfigPathsPlugin({ configFile: './tsconfig.json' })],
     },
     optimization: {
       splitChunks: {
         name: false,
         cacheGroups: {
-          // 将所有第三方模块打包到一起
           vendors: {
             name: 'vendors',
             chunks: 'initial',
@@ -118,24 +127,13 @@ module.exports = (env) => {
       },
     },
     plugins: [
-      // 清除之前打包的文件
       new CleanWebpackPlugin(),
-      // 去掉moment的所有locale files文件，减少打包后的文件
-      // https://github.com/jmblog/how-to-optimize-momentjs-with-webpack
+      new CaseSensitivePathsPlugin(),
+      new WebpackBar({
+        name: '赤兔掌柜',
+        color: '#2f54eb',
+      }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-      // happypack vs thread-loader 哪个更快
-      // new HappyPack({
-      //   id: 'ts',
-      //   threadPool: happyThreadPool,
-      //   loaders: [
-      //     {
-      //       loader: 'babel-loader',
-      //       options: {
-      //         cacheDirectory: true,
-      //       },
-      //     },
-      //   ],
-      // }),
       new HtmlWebpackPlugin(
         Object.assign(
           {},
@@ -146,7 +144,6 @@ module.exports = (env) => {
           isEnvProduction
             ? {
                 minify: {
-                  // 生产环境使用html-minifier-terser 压缩HTML
                   collapseWhitespace: true,
                   removeComments: true,
                   removeRedundantAttributes: true,
@@ -161,7 +158,15 @@ module.exports = (env) => {
             : undefined,
         ),
       ),
-      new webpack.DefinePlugin({ 'process.env.NODE_ENV': JSON.stringify('production') }),
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(isEnvProduction ? 'production' : 'development'),
+      }),
+      new ForkTsCheckerWebpackPlugin({
+        async: isEnvDevelopment,
+        eslint: {
+          files: srcPath,
+        },
+      }),
       // new BundleAnalyzerPlugin()
     ],
   };
