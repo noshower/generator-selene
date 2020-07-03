@@ -21,7 +21,8 @@
       "service/*": ["src/service/*"],
       "components/*": ["src/components/*"],
       "pages/*": ["src/pages/*"]
-    }
+    },
+    "experimentalDecorators": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "build"]
