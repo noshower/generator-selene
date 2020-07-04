@@ -4,3 +4,4 @@ webpack.common.js
 webpack.dev.js
 webpack.prod.js
 generateScopedName.js
+babel.config.js

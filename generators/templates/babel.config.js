@@ -6,10 +6,18 @@ module.exports = {
         targets: {
           browsers: ['last 2 versions', '> 1%', 'ie >= 9'],
         },
+        useBuiltIns: 'usage',
+        corejs: {version: 3, proposals: true},
         modules: false,
+        exclude: ['transform-typeof-symbol'],
       },
     ],
-    '@babel/preset-react',
+    [
+      '@babel/preset-react',
+      {
+        useBuiltIns: true,
+      },
+    ],
     '@babel/preset-typescript',
   ],
   plugins: [
@@ -25,6 +33,7 @@ module.exports = {
         loose: true,
       },
     ],
+
     '@babel/plugin-proposal-numeric-separator',
     [
       'import',
@@ -37,8 +46,9 @@ module.exports = {
     [
       '@babel/plugin-transform-runtime',
       {
-        corejs: 3,
+        corejs: false,
         useESModules: true,
+        version: require('@babel/runtime/package.json').version,
         regenerator: true,
       },
     ],
