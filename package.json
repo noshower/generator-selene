@@ -12,9 +12,6 @@
   "keywords": [
     "yeoman-generator"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "author": "noshower",
   "license": "MIT",
   "repository": {
