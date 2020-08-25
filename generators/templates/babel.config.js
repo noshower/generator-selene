@@ -7,7 +7,7 @@ module.exports = {
           browsers: ['last 2 versions', '> 1%', 'ie >= 9'],
         },
         useBuiltIns: 'usage',
-        corejs: {version: 3, proposals: true},
+        corejs: { version: 3, proposals: true },
         modules: false,
         exclude: ['transform-typeof-symbol'],
       },
@@ -18,7 +18,12 @@ module.exports = {
         useBuiltIns: true,
       },
     ],
-    '@babel/preset-typescript',
+    [
+      '@babel/preset-typescript',
+      {
+        onlyRemoveTypeImports: true,
+      },
+    ],
   ],
   plugins: [
     [
