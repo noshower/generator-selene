@@ -7,7 +7,6 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const WebpackBar = require('webpackbar');
 const generateScopedName = require('./generateScopedName');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin');
 
 const webpack = require('webpack');
 const srcPath = path.join(__dirname, './src');
@@ -41,16 +40,17 @@ module.exports = env => {
       rules: [
         { parser: { requireEnsure: false } },
         {
-          test: /\.(js|jsx|ts|tsx)$/,
+          test: /\.(ts|tsx)$/,
           enforce: 'pre',
           include: srcPath,
           loader: 'eslint-loader',
           options: {
             cache: true,
+            emitWarning: true,
           },
         },
         {
-          test: /\.(js|jsx|ts|tsx)$/,
+          test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
           loaders: [
             {
@@ -163,9 +163,6 @@ module.exports = env => {
       }),
       new ForkTsCheckerWebpackPlugin({
         async: isEnvDevelopment,
-        eslint: {
-          files: srcPath,
-        },
       }),
       // new BundleAnalyzerPlugin()
     ],
