@@ -24,7 +24,7 @@ module.exports = class extends Generator {
 
     this.fs.copyTpl(this.templatePath('package.json'), this.destinationPath('package.json'));
 
-    this.fs.copyTpl(this.templatePath('stylelintrc.config.js'), this.destinationPath('stylelintrc.config.js'));
+    this.fs.copyTpl(this.templatePath('stylelint.config.js'), this.destinationPath('stylelint.config.js'));
 
     this.fs.copyTpl(this.templatePath('template.html'), this.destinationPath('template.html'));
 
