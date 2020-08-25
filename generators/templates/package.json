@@ -18,8 +18,8 @@
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
-      "pretty-quick",
       "eslint",
+      "pretty-quick --staged",
       "git add"
     ],
     "src/**/*.less": [
