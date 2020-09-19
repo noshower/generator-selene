@@ -5,10 +5,11 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const WebpackBar = require('webpackbar');
-const generateScopedName = require('./generateScopedName');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const webpack = require('webpack');
+const generateScopedName = require('./generateScopedName');
+
 const srcPath = path.join(__dirname, './src');
 const packageName = require('./package.json').name;
 
@@ -134,30 +135,25 @@ module.exports = env => {
         color: '#2f54eb',
       }),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-      new HtmlWebpackPlugin(
-        Object.assign(
-          {},
-          {
-            filename: 'index.html',
-            template: './template.html',
-          },
-          isEnvProduction
-            ? {
-                minify: {
-                  collapseWhitespace: true,
-                  removeComments: true,
-                  removeRedundantAttributes: true,
-                  removeScriptTypeAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  useShortDoctype: true,
-                  minifyJS: true,
-                  minifyCSS: true,
-                  minifyURLs: true,
-                },
-              }
-            : undefined,
-        ),
-      ),
+      new HtmlWebpackPlugin({
+        filename: 'index.html',
+        template: './template.html',
+        ...(isEnvProduction
+          ? {
+              minify: {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+              },
+            }
+          : undefined),
+      }),
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(isEnvProduction ? 'production' : 'development'),
       }),
