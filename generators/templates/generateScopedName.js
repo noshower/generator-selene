@@ -29,6 +29,5 @@ const uniqueFileNameGenerator = createUniqueIdGenerator();
 const uniqueClassNameGenerator = createUniqueIdGenerator();
 
 module.exports = (localName, resourcePath) => {
-  const componentName = resourcePath.split('/h5/src')[1];
-  return `${uniqueFileNameGenerator(componentName)}_${uniqueClassNameGenerator(localName)}`;
+  return `${uniqueFileNameGenerator(resourcePath)}_${uniqueClassNameGenerator(localName)}`;
 };
