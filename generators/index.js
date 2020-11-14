@@ -1,42 +1,31 @@
 var Generator = require('yeoman-generator');
 
 module.exports = class extends Generator {
+  constructor(args, opts) {
+    super(args, opts);
+  }
+  async prompting() {
+    this.answers = await this.prompt([
+      { type: 'input', name: 'appName', message: '请输入应用名称', default: this.appname },
+      { type: 'list', name: 'installType', message: '请选择安装依赖的方式', default: 'npm', choices: ['npm', 'yarn'] },
+    ]);
+  }
   writing() {
-    this.fs.copyTpl(this.templatePath('src'), this.destinationPath('src'));
-
-    this.fs.copyTpl(this.templatePath('tests'), this.destinationPath('test'));
-
-    this.fs.copyTpl(this.templatePath('.eslintignore'), this.destinationPath('.eslintignore'));
-
-    this.fs.copyTpl(this.templatePath('.eslintrc.js'), this.destinationPath('.eslintrc.js'));
-
-    this.fs.copyTpl(this.templatePath('.prettierignore'), this.destinationPath('.prettierignore'));
-
-    this.fs.copyTpl(this.templatePath('.prettierrc.js'), this.destinationPath('.prettierrc.js'));
-
-    this.fs.copyTpl(this.templatePath('.stylelintignore'), this.destinationPath('.stylelintignore'));
-
-    this.fs.copyTpl(this.templatePath('babel.config.js'), this.destinationPath('babel.config.js'));
-
-    this.fs.copyTpl(this.templatePath('generateScopedName.js'), this.destinationPath('generateScopedName.js'));
-
-    this.fs.copyTpl(this.templatePath('jest.config.js'), this.destinationPath('jest.config.js'));
-
-    this.fs.copyTpl(this.templatePath('package.json'), this.destinationPath('package.json'));
-
-    this.fs.copyTpl(this.templatePath('stylelint.config.js'), this.destinationPath('stylelint.config.js'));
-
-    this.fs.copyTpl(this.templatePath('template.html'), this.destinationPath('template.html'));
-
-    this.fs.copyTpl(this.templatePath('tsconfig.json'), this.destinationPath('tsconfig.json'));
-
-    this.fs.copyTpl(this.templatePath('webpack.common.js'), this.destinationPath('webpack.common.js'));
-
-    this.fs.copyTpl(this.templatePath('webpack.dev.js'), this.destinationPath('webpack.dev.js'));
-
-    this.fs.copyTpl(this.templatePath('webpack.prod.js'), this.destinationPath('webpack.prod.js'));
+    this.fs.copyTpl(this.templatePath(), this.destinationPath());
+    this.deleteDestination('/package-lock.json');
+    this.fs.extendJSON(this.destinationPath('package.json'), {
+      name: this.options.appName || this.appname,
+    });
   }
   install() {
-    this.npmInstall();
+    if (this.answers.installType === 'npm') {
+      this.npmInstall();
+    } else {
+      this.yarnInstall();
+    }
+  }
+  end() {
+    const command = this.answers.installType === 'npm' ? 'npm start' : 'yarn start';
+    this.log(`安装完毕，你可以使用 ${command} 启动应用程序`);
   }
 };

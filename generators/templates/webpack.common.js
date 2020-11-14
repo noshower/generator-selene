@@ -34,7 +34,7 @@ module.exports = env => {
       app: path.join(srcPath, './index.tsx'), // 入口文件
     },
     output: {
-      jsonpFunction: `webpackJsonp_${packageName}`,
+      // jsonpFunction: `webpackJsonp_${packageName}`,
     },
     module: {
       noParse: /jquery/,
@@ -53,7 +53,7 @@ module.exports = env => {
         {
           test: /\.(ts|tsx)$/,
           exclude: /node_modules/,
-          loaders: [
+          use: [
             {
               loader: 'babel-loader',
               options: {

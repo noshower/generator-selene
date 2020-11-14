@@ -60,5 +60,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 1,
     '@typescript-eslint/no-non-null-assertion': 0,
     'no-restricted-syntax': 0,
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
   },
 };
