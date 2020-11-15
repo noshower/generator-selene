@@ -12,6 +12,17 @@ module.exports = class extends Generator {
   }
   writing() {
     this.fs.copyTpl(this.templatePath(), this.destinationPath());
+    this.fs.copyTpl(
+      [
+        this.templatePath('.eslintignore'),
+        this.templatePath('.eslintrc.js'),
+        this.templatePath('.gitignore'),
+        this.templatePath('.prettierignore'),
+        this.templatePath('.prettierrc.js'),
+        this.templatePath('.stylelintignore'),
+      ],
+      this.destinationPath(),
+    );
     this.deleteDestination('/package-lock.json');
     this.fs.extendJSON(this.destinationPath('package.json'), {
       name: this.options.appName || this.appname,
